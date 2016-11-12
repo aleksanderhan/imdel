@@ -3,6 +3,7 @@ package alekh.imdel;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.hardware.Camera;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -44,7 +45,10 @@ public class CameraActivity extends AppCompatActivity {
         FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
         preview.addView(mPreview);
 
+        // Create capture button with font
+        Typeface font = Typeface.createFromAsset( getAssets(), "fontawesome-webfont.ttf" );
         Button captureButton = (Button) findViewById(R.id.button_capture);
+        captureButton.setTypeface(font);
         captureButton.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
@@ -83,13 +87,13 @@ public class CameraActivity extends AppCompatActivity {
 
 
     /** A safe way to get an instance of the Camera object. */
-    public static Camera getCameraInstance(int i){
+    private static Camera getCameraInstance(int i){
         Camera c = null;
         try {
             c = Camera.open(i); // attempt to get a Camera instance
         }
         catch (Exception e){
-            System.out.println(e.getMessage());
+            e.printStackTrace();
         }
         return c; // returns null if camera is unavailable
     }
@@ -118,8 +122,7 @@ public class CameraActivity extends AppCompatActivity {
             try {
                 pictureFile = createImageFile();
             } catch (IOException e) {
-                System.out.println(e.getMessage());
-                setResult(RESULT_CANCELED);
+                e.printStackTrace();
                 return;
             }
             try {
@@ -128,16 +131,13 @@ public class CameraActivity extends AppCompatActivity {
                 fos.write(data);
                 fos.close();
 
-                // Send file path back to parent activity
-                Intent resultIntent = new Intent();
-                resultIntent.putExtra("image_path", mCurrentPhotoPath);
-                setResult(RESULT_OK, resultIntent);
+                // Go to UploadImage activity
+                toUploadImageActivity();
+
             } catch (FileNotFoundException e) {
-                System.out.println(e.getMessage());
-                setResult(RESULT_CANCELED);
+                e.printStackTrace();
             } catch (IOException e) {
-                System.out.println(e.getMessage());
-                setResult(RESULT_CANCELED);
+                e.printStackTrace();
             } finally {
                 finish();
             }
@@ -145,7 +145,7 @@ public class CameraActivity extends AppCompatActivity {
     };
 
 
-    public static void setCameraDisplayOrientation(Activity activity, int cameraId, Camera camera) {
+    private static void setCameraDisplayOrientation(Activity activity, int cameraId, Camera camera) {
         Camera.CameraInfo info = new Camera.CameraInfo();
         Camera.getCameraInfo(cameraId, info);
         int rotation = activity.getWindowManager().getDefaultDisplay().getRotation();
@@ -173,6 +173,13 @@ public class CameraActivity extends AppCompatActivity {
             result = (info.orientation - degrees + 360) % 360;
         }
         camera.setDisplayOrientation(result);
+    }
+
+
+    private void toUploadImageActivity() {
+        Intent intent = new Intent(this, UploadImage.class);
+        intent.putExtra("image_path", mCurrentPhotoPath);
+        startActivity(intent);
     }
 
 
