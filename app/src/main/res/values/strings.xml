@@ -3,6 +3,6 @@
     <string name="camera_button">&#xf030; Take Picture</string>
     <string name="upload_button">&#xf1d8;</string>
 
-    <string name="upload_path">/upload_image</string>
-    <string name="uploaded">Successfully uploaded</string>
+    <string name="upload_server">http://imdel.tk:8000/upload_image</string>
+
 </resources>
