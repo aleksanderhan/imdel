@@ -2,6 +2,7 @@ package alekh.imdel;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.hardware.Camera;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -117,34 +118,40 @@ public class CameraActivity extends AppCompatActivity {
             File pictureFile;
             try {
                 pictureFile = createImageFile();
-                System.out.println(pictureFile.getAbsolutePath()); // DELETE THIS
             } catch (IOException e) {
                 System.out.println(e.getMessage());
+                setResult(RESULT_CANCELED);
                 return;
             }
             try {
+                // Save file
                 FileOutputStream fos = new FileOutputStream(pictureFile);
                 fos.write(data);
                 fos.close();
-                System.out.println("file saved"); // DELETE THIS
+
+                // Send file path back to parent activity
+                Intent resultIntent = new Intent();
+                resultIntent.putExtra("image_path", mCurrentPhotoPath);
+                setResult(RESULT_OK, resultIntent);
             } catch (FileNotFoundException e) {
                 System.out.println(e.getMessage());
+                setResult(RESULT_CANCELED);
             } catch (IOException e) {
                 System.out.println(e.getMessage());
+                setResult(RESULT_CANCELED);
+            } finally {
+                finish();
             }
         }
     };
 
 
-    public static void setCameraDisplayOrientation(Activity activity,
-                                                   int cameraId, android.hardware.Camera camera)
-    {
+    public static void setCameraDisplayOrientation(Activity activity, int cameraId, android.hardware.Camera camera) {
         android.hardware.Camera.CameraInfo info = new android.hardware.Camera.CameraInfo();
         android.hardware.Camera.getCameraInfo(cameraId, info);
         int rotation = activity.getWindowManager().getDefaultDisplay().getRotation();
         int degrees = 0;
-        switch (rotation)
-        {
+        switch (rotation) {
             case Surface.ROTATION_0:
                 degrees = 0;
                 break;
@@ -160,13 +167,10 @@ public class CameraActivity extends AppCompatActivity {
         }
 
         int result;
-        if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT)
-        {
+        if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
             result = (info.orientation + degrees) % 360;
             result = (360 - result) % 360; // compensate the mirror
-        }
-        else
-        { // back-facing
+        } else { // back-facing
             result = (info.orientation - degrees + 360) % 360;
         }
         camera.setDisplayOrientation(result);

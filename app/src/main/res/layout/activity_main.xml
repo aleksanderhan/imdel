@@ -13,11 +13,14 @@
     <Button
         android:id="@+id/button_to_camera"
         android:text="Take picture"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:onClick="toCamera"/>
+        android:onClick="toCamera"
+        android:background="@drawable/button"
+        android:textColor="#ffd3ffe5"
+        android:textStyle="bold" />
 
 </RelativeLayout>
