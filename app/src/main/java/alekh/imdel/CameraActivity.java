@@ -131,7 +131,7 @@ public class CameraActivity extends AppCompatActivity {
                 fos.write(data);
                 fos.close();
 
-                // Go to UploadImage activity
+                // Go to UploadImageActivity activity
                 toUploadImageActivity();
 
             } catch (FileNotFoundException e) {
@@ -177,7 +177,7 @@ public class CameraActivity extends AppCompatActivity {
 
 
     private void toUploadImageActivity() {
-        Intent intent = new Intent(this, UploadImage.class);
+        Intent intent = new Intent(this, UploadImageActivity.class);
         intent.putExtra("image_path", mCurrentPhotoPath);
         startActivity(intent);
     }

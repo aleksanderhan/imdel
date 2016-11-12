@@ -13,6 +13,7 @@ import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.message.BasicHeader;
 
+
 public class MultipartEntity implements HttpEntity {
 
     private String boundary = null;
@@ -30,7 +31,7 @@ public class MultipartEntity implements HttpEntity {
             try {
                 out.write(("--" + boundary + "\r\n").getBytes());
             } catch (final IOException e) {
-
+                e.printStackTrace();
             }
         }
         isSetFirst = true;
@@ -43,7 +44,7 @@ public class MultipartEntity implements HttpEntity {
         try {
             out.write(("\r\n--" + boundary + "--\r\n").getBytes());
         } catch (final IOException e) {
-
+            e.printStackTrace();
         }
         isSetLast = true;
     }
@@ -80,12 +81,12 @@ public class MultipartEntity implements HttpEntity {
             }
             out.flush();
         } catch (final IOException e) {
-
+            e.printStackTrace();
         } finally {
             try {
                 fin.close();
             } catch (final IOException e) {
-
+                e.printStackTrace();
             }
         }
     }
@@ -94,7 +95,7 @@ public class MultipartEntity implements HttpEntity {
         try {
             addPart(key, value.getName(), new FileInputStream(value));
         } catch (final FileNotFoundException e) {
-
+            e.printStackTrace();
         }
     }
 
