@@ -119,15 +119,23 @@ public class UploadActivity extends AppCompatActivity {
 
         Bitmap bitmap = BitmapFactory.decodeFile(imagePath, bmOptions);
 
+        // Rotate image depending on camera direction
+        int rotateByDegrees = 0;
+        int cameraId = getIntent().getExtras().getInt("cameraId");
+        if (cameraId == CameraActivity.CAMERA_FACEING_BACK) {
+            rotateByDegrees = 90;
+        } else if (cameraId == CameraActivity.CAMERA_FACEING_FRONT) {
+            rotateByDegrees = 270;
+        }
+
         Matrix mtx = new Matrix();
-        mtx.postRotate(90);
+        mtx.postRotate(rotateByDegrees);
         // Rotating Bitmap
         rotatedBMP = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), mtx, true);
 
         if (rotatedBMP != bitmap) {
             bitmap.recycle();
         }
-
         mImageView.setImageBitmap(rotatedBMP);
     }
 

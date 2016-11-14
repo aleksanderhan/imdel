@@ -21,12 +21,14 @@ public class CameraActivity extends AppCompatActivity {
 
     public static final int UPLOAD_IMAGE_RESULT_CODE = 2;
     public static final int BACK_PRESSED = 3;
+    public static final int CAMERA_FACEING_BACK = 0;
+    public static final int CAMERA_FACEING_FRONT = 1;
 
     private Camera mCamera;
     private CameraPreview mPreview;
     private FrameLayout preview;
     private String imagePath;
-    private int cameraId = 0;
+    private int cameraId = CAMERA_FACEING_BACK;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,10 +72,10 @@ public class CameraActivity extends AppCompatActivity {
     }
 
     private void changeCamera() {
-        if (cameraId == 0 && Camera.getNumberOfCameras() > 1) {
-            cameraId = 1;
+        if (cameraId == CAMERA_FACEING_BACK && Camera.getNumberOfCameras() > 1) {
+            cameraId = CAMERA_FACEING_FRONT;
         } else {
-            cameraId = 0;
+            cameraId = CAMERA_FACEING_BACK;
         }
         // Destroy SurfacePreview
         mPreview.surfaceDestroyed(mPreview.getHolder());
@@ -103,6 +105,7 @@ public class CameraActivity extends AppCompatActivity {
         try {
             Intent intent = new Intent(this, UploadActivity.class);
             intent.putExtra("imagePath", imagePath);
+            intent.putExtra("cameraId", cameraId);
             startActivityForResult(intent, UPLOAD_IMAGE_RESULT_CODE);
         } catch (Exception e) {
             e.printStackTrace();
@@ -127,7 +130,9 @@ public class CameraActivity extends AppCompatActivity {
                 finish();
             } else {
                 System.out.println("User pressed Cancel");
-                // TODO: delete image
+                // Delete canceled image
+                File f = new File(imagePath);
+                f.delete();
                 finish();
             }
         } else {
