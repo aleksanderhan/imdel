@@ -27,6 +27,16 @@
         android:id="@+id/camera_preview"
         android:layout_above="@+id/capture_button">
 
+        <Button
+            android:text="@string/camera_switch_button"
+            android:background="@android:color/transparent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/camera_switch_button"
+            android:textColor="@color/grey"
+            android:layout_gravity="top|right"
+            android:textSize="30sp"/>
+
     </FrameLayout>
 
 </RelativeLayout>
