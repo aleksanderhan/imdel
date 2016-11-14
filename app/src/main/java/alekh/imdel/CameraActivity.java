@@ -1,7 +1,6 @@
 package alekh.imdel;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.hardware.Camera;
@@ -20,9 +19,10 @@ import java.io.IOException;
 
 public class CameraActivity extends AppCompatActivity {
 
-    private static final int UPLOAD_IMAGE_RESULT_CODE = 2;
+    public static final int UPLOAD_IMAGE_RESULT_CODE = 2;
+    public static final int BACK_PRESSED = 3;
 
-    private Camera mCamera;
+    private Camera camera;
     private CameraPreview mPreview;
     private String imagePath;
 
@@ -33,11 +33,11 @@ public class CameraActivity extends AppCompatActivity {
 
         // Create an instance of Camera
         int cameraId = 0;
-        mCamera = getCameraInstance(cameraId);
-        setCameraDisplayOrientation(this, cameraId, mCamera);
+        camera = getCameraInstance(cameraId);
+        setCameraDisplayOrientation(this, cameraId, camera);
 
         // Create our Preview view and set it as the content of our activity.
-        mPreview = new CameraPreview(this, mCamera);
+        mPreview = new CameraPreview(this, camera);
         FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
         preview.addView(mPreview);
 
@@ -50,18 +50,20 @@ public class CameraActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         // get an image from the camera
-                        mCamera.takePicture(null, null, mPicture);
+                        camera.takePicture(null, null, photoCallback);
                         // Go to UploadActivity activity
                     }
                 }
         );
     }
 
+
     private void toUploadActivity() {
         Intent intent = new Intent(this, UploadActivity.class);
         intent.putExtra("imagePath", imagePath);
         startActivityForResult(intent, UPLOAD_IMAGE_RESULT_CODE);
     }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -70,15 +72,17 @@ public class CameraActivity extends AppCompatActivity {
             // Make sure the request was successful
             if (resultCode == RESULT_OK) {
                 System.out.println("User pressed Publish");
+
                 String imageText = (String) data.getStringExtra("imageText");
                 Intent returnIntent = new Intent();
                 returnIntent.putExtra("imagePath", imagePath);
                 returnIntent.putExtra("imageText", imageText);
                 setResult(Activity.RESULT_OK, returnIntent);
+
                 finish();
             } else {
                 System.out.println("User pressed Cancel");
-                 // TODO: delete image
+                // TODO: delete image
                 finish();
             }
         } else {
@@ -89,8 +93,9 @@ public class CameraActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
         releaseCamera();
+        setResult(BACK_PRESSED);
+        finish();
     }
 
 
@@ -102,9 +107,9 @@ public class CameraActivity extends AppCompatActivity {
 
 
     private void releaseCamera() {
-        if (mCamera != null) {
-            mCamera.release();
-            mCamera = null;
+        if (camera != null) {
+            camera.release();
+            camera = null;
         }
     }
 
@@ -114,6 +119,10 @@ public class CameraActivity extends AppCompatActivity {
         Camera c = null;
         try {
             c = Camera.open(i); // attempt to get a Camera instance
+            Camera.Parameters cParams = c.getParameters();
+            Camera.Size photoSize = getBiggestSupportedPictureSizeSmallerThan(cParams, 1980*1080);
+            cParams.setPictureSize(photoSize.width, photoSize.height);
+            c.setParameters(cParams);
         }
         catch (Exception e){
             e.printStackTrace();
@@ -130,13 +139,14 @@ public class CameraActivity extends AppCompatActivity {
                 ".jpg",         /* suffix */
                 storageDir      /* directory */
         );
+
         imagePath = image.getAbsolutePath();
 
         return image;
     }
 
 
-    private Camera.PictureCallback mPicture = new Camera.PictureCallback() {
+    private Camera.PictureCallback photoCallback = new Camera.PictureCallback() {
         @Override
         public void onPictureTaken(byte[] data, Camera camera) {
             File pictureFile;
@@ -158,7 +168,6 @@ public class CameraActivity extends AppCompatActivity {
                 e.printStackTrace();
             } finally {
                 toUploadActivity();
-                //finish();
             }
         }
     };
@@ -195,7 +204,23 @@ public class CameraActivity extends AppCompatActivity {
     }
 
 
+    private static Camera.Size getBiggestSupportedPictureSizeSmallerThan(Camera.Parameters params, int biggestArea) {
+        Camera.Size result = null;
 
+        for (Camera.Size size : params.getSupportedPictureSizes()) {
+            System.out.println("width: " + size.width + ", height: " + size.height);
+            int newArea = size.width * size.height;
+            if (result == null && newArea < biggestArea) {
+                result = size;
+            } else {
+                int resultArea = result.width * result.height;
+                if (newArea < biggestArea && newArea > resultArea) {
+                    result = size;
+                }
+            }
+        }
+        return result;
+    }
 
 
 }

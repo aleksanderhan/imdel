@@ -30,7 +30,7 @@ public class UploadActivity extends AppCompatActivity {
         addText = (EditText)findViewById(R.id.addText);
 
         // Set font
-        Typeface font = Typeface.createFromAsset( getAssets(), "fontawesome-webfont.ttf" );
+        Typeface font = Typeface.createFromAsset(getAssets(), "fontawesome-webfont.ttf" );
 
         // Create upload button
         Button uploadButton = (Button) findViewById(R.id.publish_button);
@@ -41,13 +41,14 @@ public class UploadActivity extends AppCompatActivity {
                     public void onClick(View v) {
                         try {
                             String imageText = addText.getText().toString();
-                            System.out.println(imageText);
+
                             Intent returnIntent = new Intent();
                             returnIntent.putExtra("imageText", imageText);
                             setResult(Activity.RESULT_OK, returnIntent);
-                            finish();
                         } catch (Exception e) {
                             e.printStackTrace();
+                        } finally {
+                            finish();
                         }
                     }
                 }
@@ -63,9 +64,10 @@ public class UploadActivity extends AppCompatActivity {
                         try {
                             Intent returnIntent = new Intent();
                             setResult(Activity.RESULT_CANCELED, returnIntent);
-                            finish();
                         } catch (Exception e) {
                             e.printStackTrace();
+                        } finally {
+                            finish();
                         }
                     }
                 }
@@ -75,9 +77,14 @@ public class UploadActivity extends AppCompatActivity {
 
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
-        mImageView = (ImageView) findViewById(R.id.capturedImage);
+        mImageView = (ImageView) findViewById(R.id.captured_view);
         String imagePath = getIntent().getExtras().getString("imagePath");
-        setPic(imagePath);
+
+        if (rotatedBMP == null) {
+            setPic(imagePath);
+        } else {
+            rotatedBMP.recycle();
+        }
     }
 
 
