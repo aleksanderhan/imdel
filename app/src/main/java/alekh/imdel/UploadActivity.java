@@ -20,7 +20,6 @@ import android.widget.ImageView;
 public class UploadActivity extends AppCompatActivity {
 
     private ImageView mImageView;
-    private Bitmap rotatedBMP;
     private EditText addText;
 
 
@@ -29,14 +28,11 @@ public class UploadActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_upload);
 
-        System.out.println(1);
-
         // TextEdit
         addText = (EditText)findViewById(R.id.add_text);
 
         // Set font
         Typeface font = Typeface.createFromAsset(getAssets(), "fontawesome-webfont.ttf" );
-        System.out.println(2);
         // Create upload button
         Button uploadButton = (Button) findViewById(R.id.publish_button);
         uploadButton.setTypeface(font);
@@ -58,7 +54,6 @@ public class UploadActivity extends AppCompatActivity {
                     }
                 }
         );
-        System.out.println(3);
         // Create cancel button
         Button cancelButton = (Button) findViewById(R.id.cancel_button);
         cancelButton.setTypeface(font);
@@ -77,22 +72,14 @@ public class UploadActivity extends AppCompatActivity {
                     }
                 }
         );
-        System.out.println(4);
     }
 
 
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
-        System.out.println(5);
         mImageView = (ImageView) findViewById(R.id.captured_view);
         String imagePath = getIntent().getExtras().getString("imagePath");
-        System.out.println(6);
-        if (rotatedBMP == null) {
-            setPic(imagePath);
-        } else {
-            rotatedBMP.recycle();
-        }
-        System.out.println(7);
+        setPic(imagePath);
     }
 
 
@@ -119,24 +106,7 @@ public class UploadActivity extends AppCompatActivity {
 
         Bitmap bitmap = BitmapFactory.decodeFile(imagePath, bmOptions);
 
-        // Rotate image depending on camera direction
-        int rotateByDegrees = 0;
-        int cameraId = getIntent().getExtras().getInt("cameraId");
-        if (cameraId == CameraActivity.CAMERA_FACEING_BACK) {
-            rotateByDegrees = 90;
-        } else if (cameraId == CameraActivity.CAMERA_FACEING_FRONT) {
-            rotateByDegrees = 270;
-        }
-
-        Matrix mtx = new Matrix();
-        mtx.postRotate(rotateByDegrees);
-        // Rotating Bitmap
-        rotatedBMP = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), mtx, true);
-
-        if (rotatedBMP != bitmap) {
-            bitmap.recycle();
-        }
-        mImageView.setImageBitmap(rotatedBMP);
+        mImageView.setImageBitmap(bitmap);
     }
 
 }
