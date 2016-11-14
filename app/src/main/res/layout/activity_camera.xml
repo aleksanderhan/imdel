@@ -14,7 +14,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:text="@string/camera_button"
-        android:id="@+id/button_capture"
+        android:id="@+id/capture_button"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:background="@drawable/button"
@@ -25,7 +25,7 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:id="@+id/camera_preview"
-        android:layout_above="@+id/button_capture">
+        android:layout_above="@+id/capture_button">
 
     </FrameLayout>
 

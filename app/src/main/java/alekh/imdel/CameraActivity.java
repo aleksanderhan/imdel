@@ -16,24 +16,20 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 
 
 public class CameraActivity extends AppCompatActivity {
 
+    private static final int UPLOAD_IMAGE_RESULT_CODE = 2;
+
     private Camera mCamera;
     private CameraPreview mPreview;
-    private static Context context;
-    private String mCurrentPhotoPath;
+    private String imagePath;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera);
-
-        CameraActivity.context = getApplicationContext();
 
         // Create an instance of Camera
         int cameraId = 0;
@@ -46,8 +42,8 @@ public class CameraActivity extends AppCompatActivity {
         preview.addView(mPreview);
 
         // Create capture button with font
-        Typeface font = Typeface.createFromAsset( getAssets(), "fontawesome-webfont.ttf" );
-        Button captureButton = (Button) findViewById(R.id.button_capture);
+        Typeface font = Typeface.createFromAsset(getAssets(), "fontawesome-webfont.ttf" );
+        Button captureButton = (Button) findViewById(R.id.capture_button);
         captureButton.setTypeface(font);
         captureButton.setOnClickListener(
                 new View.OnClickListener() {
@@ -55,23 +51,50 @@ public class CameraActivity extends AppCompatActivity {
                     public void onClick(View v) {
                         // get an image from the camera
                         mCamera.takePicture(null, null, mPicture);
+                        // Go to UploadActivity activity
                     }
                 }
         );
     }
 
+    private void toUploadActivity() {
+        Intent intent = new Intent(this, UploadActivity.class);
+        intent.putExtra("imagePath", imagePath);
+        startActivityForResult(intent, UPLOAD_IMAGE_RESULT_CODE);
+    }
 
-    public static Context getAppContext() {
-        return CameraActivity.context;
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // Check which request we're responding to
+        if (requestCode == UPLOAD_IMAGE_RESULT_CODE) {
+            // Make sure the request was successful
+            if (resultCode == RESULT_OK) {
+                System.out.println("User pressed Publish");
+                String imageText = (String) data.getStringExtra("imageText");
+                Intent returnIntent = new Intent();
+                returnIntent.putExtra("imagePath", imagePath);
+                returnIntent.putExtra("imageText", imageText);
+                setResult(Activity.RESULT_OK, returnIntent);
+                finish();
+            } else {
+                System.out.println("User pressed Cancel");
+                 // TODO: delete image
+                finish();
+            }
+        } else {
+            System.out.println("Something very bad happened");
+        }
     }
 
 
+    @Override
     public void onBackPressed() {
         super.onBackPressed();
         releaseCamera();
     }
 
 
+    @Override
     public void onPause() {
         super.onPause();
         releaseCamera();
@@ -101,16 +124,14 @@ public class CameraActivity extends AppCompatActivity {
 
     private File createImageFile() throws IOException {
         // Create an image file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
-        File storageDir = getAppContext().getFilesDir();
+        File storageDir = this.getFilesDir();
         File image = File.createTempFile(
-                imageFileName,  /* prefix */
+                "captured_image",  /* prefix */
                 ".jpg",         /* suffix */
                 storageDir      /* directory */
         );
+        imagePath = image.getAbsolutePath();
 
-        mCurrentPhotoPath = image.getAbsolutePath();
         return image;
     }
 
@@ -131,15 +152,13 @@ public class CameraActivity extends AppCompatActivity {
                 fos.write(data);
                 fos.close();
 
-                // Go to UploadImageActivity activity
-                toUploadImageActivity();
-
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
             } finally {
-                finish();
+                toUploadActivity();
+                //finish();
             }
         }
     };
@@ -176,11 +195,7 @@ public class CameraActivity extends AppCompatActivity {
     }
 
 
-    private void toUploadImageActivity() {
-        Intent intent = new Intent(this, UploadImageActivity.class);
-        intent.putExtra("image_path", mCurrentPhotoPath);
-        startActivity(intent);
-    }
+
 
 
 }
