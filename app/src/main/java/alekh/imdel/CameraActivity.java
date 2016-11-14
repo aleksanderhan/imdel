@@ -2,6 +2,9 @@ package alekh.imdel;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.graphics.Typeface;
 import android.hardware.Camera;
 import android.support.v7.app.AppCompatActivity;
@@ -11,6 +14,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -119,8 +123,6 @@ public class CameraActivity extends AppCompatActivity {
         if (requestCode == UPLOAD_IMAGE_RESULT_CODE) {
             // Make sure the request was successful
             if (resultCode == RESULT_OK) {
-                System.out.println("User pressed Publish");
-
                 String imageText = (String) data.getStringExtra("imageText");
                 Intent returnIntent = new Intent();
                 returnIntent.putExtra("imagePath", imagePath);
@@ -129,14 +131,13 @@ public class CameraActivity extends AppCompatActivity {
 
                 finish();
             } else {
-                System.out.println("User pressed Cancel");
                 // Delete canceled image
                 File f = new File(imagePath);
                 f.delete();
                 finish();
             }
         } else {
-            System.out.println("Something very bad happened");
+
         }
     }
 
@@ -165,13 +166,24 @@ public class CameraActivity extends AppCompatActivity {
 
 
     /** A safe way to get an instance of the Camera object. */
-    private static Camera getCameraInstance(int id){
+    private Camera getCameraInstance(int id){
         Camera c = null;
         try {
             c = Camera.open(id); // attempt to get a Camera instance
             Camera.Parameters cParams = c.getParameters();
-            Camera.Size photoSize = getBiggestSupportedPictureSizeSmallerThan(cParams, 1980*1080);
+
+            // Set photo size
+            int max_resolution = 1980*1080;
+            Camera.Size photoSize = getBiggestSupportedPictureSizeSmallerThan(cParams, max_resolution);
             cParams.setPictureSize(photoSize.width, photoSize.height);
+
+            // Set rotation depending on camera
+            if (cameraId == CAMERA_FACEING_BACK) {
+                cParams.setRotation(90);
+            } else if (cameraId == CAMERA_FACEING_FRONT) {
+                cParams.setRotation(270);
+            }
+
             c.setParameters(cParams);
         }
         catch (Exception e){
@@ -191,7 +203,6 @@ public class CameraActivity extends AppCompatActivity {
         );
 
         imagePath = image.getAbsolutePath();
-
         return image;
     }
 
@@ -207,6 +218,17 @@ public class CameraActivity extends AppCompatActivity {
                 return;
             }
             try {
+                  // If photo taken by front camera, make a mirror image before saving to correspond to what you actually see
+                if (cameraId == CAMERA_FACEING_FRONT) {
+                    Bitmap bIn = BitmapFactory.decodeByteArray(data, 0, data.length);
+                    Matrix m = new Matrix();
+                    m.preScale(-1, 1);
+                    Bitmap bOut = Bitmap.createBitmap(bIn, 0, 0, bIn.getWidth(), bIn.getHeight(), m, false);
+                    ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+                    bOut.compress(Bitmap.CompressFormat.JPEG, 100, outStream);
+                    data = outStream.toByteArray();
+                }
+
                 // Save file
                 FileOutputStream fos = new FileOutputStream(pictureFile);
                 fos.write(data);
