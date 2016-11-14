@@ -22,9 +22,11 @@ public class CameraActivity extends AppCompatActivity {
     public static final int UPLOAD_IMAGE_RESULT_CODE = 2;
     public static final int BACK_PRESSED = 3;
 
-    private Camera camera;
+    private Camera mCamera;
     private CameraPreview mPreview;
+    private FrameLayout preview;
     private String imagePath;
+    private int cameraId = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,14 +34,13 @@ public class CameraActivity extends AppCompatActivity {
         setContentView(R.layout.activity_camera);
 
         // Create an instance of Camera
-        int cameraId = 0;
-        camera = getCameraInstance(cameraId);
-        setCameraDisplayOrientation(this, cameraId, camera);
+        mCamera = getCameraInstance(cameraId);
+        setCameraDisplayOrientation(this, cameraId, mCamera);
 
         // Create our Preview view and set it as the content of our activity.
-        mPreview = new CameraPreview(this, camera);
-        FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
-        preview.addView(mPreview);
+        mPreview = new CameraPreview(this, mCamera);
+        preview = (FrameLayout) findViewById(R.id.camera_preview);
+        preview.addView(mPreview, 0);
 
         // Create capture button with font
         Typeface font = Typeface.createFromAsset(getAssets(), "fontawesome-webfont.ttf" );
@@ -50,18 +51,62 @@ public class CameraActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         // get an image from the camera
-                        camera.takePicture(null, null, photoCallback);
-                        // Go to UploadActivity activity
+                        mCamera.takePicture(null, null, photoCallback);
+                    }
+                }
+        );
+
+        // Create camera switch button
+        Button switchButton = (Button) findViewById(R.id.camera_switch_button);
+        switchButton.setTypeface(font);
+        switchButton.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        changeCamera();
                     }
                 }
         );
     }
 
+    private void changeCamera() {
+        if (cameraId == 0 && Camera.getNumberOfCameras() > 1) {
+            cameraId = 1;
+        } else {
+            cameraId = 0;
+        }
+        // Destroy SurfacePreview
+        mPreview.surfaceDestroyed(mPreview.getHolder());
+        mPreview.getHolder().removeCallback(mPreview);
+        mPreview.destroyDrawingCache();
+        preview.removeView(mPreview);
+        mCamera.stopPreview();
+        mCamera.stopPreview();
+        mCamera.setPreviewCallback(null);
+        mCamera.release();
+
+        // Create new camera object
+        mCamera = getCameraInstance(cameraId);
+        setCameraDisplayOrientation(this, cameraId, mCamera);
+        mPreview = new CameraPreview(CameraActivity.this, mCamera);
+        preview.addView(mPreview, 0);
+        try {
+            mCamera.setPreviewDisplay(mPreview.getHolder());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        mCamera.startPreview();
+    }
+
 
     private void toUploadActivity() {
-        Intent intent = new Intent(this, UploadActivity.class);
-        intent.putExtra("imagePath", imagePath);
-        startActivityForResult(intent, UPLOAD_IMAGE_RESULT_CODE);
+        try {
+            Intent intent = new Intent(this, UploadActivity.class);
+            intent.putExtra("imagePath", imagePath);
+            startActivityForResult(intent, UPLOAD_IMAGE_RESULT_CODE);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 
@@ -107,18 +152,18 @@ public class CameraActivity extends AppCompatActivity {
 
 
     private void releaseCamera() {
-        if (camera != null) {
-            camera.release();
-            camera = null;
+        if (mCamera != null) {
+            mCamera.release();
+            mCamera = null;
         }
     }
 
 
     /** A safe way to get an instance of the Camera object. */
-    private static Camera getCameraInstance(int i){
+    private static Camera getCameraInstance(int id){
         Camera c = null;
         try {
-            c = Camera.open(i); // attempt to get a Camera instance
+            c = Camera.open(id); // attempt to get a Camera instance
             Camera.Parameters cParams = c.getParameters();
             Camera.Size photoSize = getBiggestSupportedPictureSizeSmallerThan(cParams, 1980*1080);
             cParams.setPictureSize(photoSize.width, photoSize.height);
@@ -167,7 +212,7 @@ public class CameraActivity extends AppCompatActivity {
             } catch (IOException e) {
                 e.printStackTrace();
             } finally {
-                toUploadActivity();
+                toUploadActivity(); // Go to UploadActivity
             }
         }
     };
@@ -208,7 +253,6 @@ public class CameraActivity extends AppCompatActivity {
         Camera.Size result = null;
 
         for (Camera.Size size : params.getSupportedPictureSizes()) {
-            System.out.println("width: " + size.width + ", height: " + size.height);
             int newArea = size.width * size.height;
             if (result == null && newArea < biggestArea) {
                 result = size;

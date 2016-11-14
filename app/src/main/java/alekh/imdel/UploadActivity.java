@@ -6,8 +6,11 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.Typeface;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -26,12 +29,14 @@ public class UploadActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_upload);
 
+        System.out.println(1);
+
         // TextEdit
-        addText = (EditText)findViewById(R.id.addText);
+        addText = (EditText)findViewById(R.id.add_text);
 
         // Set font
         Typeface font = Typeface.createFromAsset(getAssets(), "fontawesome-webfont.ttf" );
-
+        System.out.println(2);
         // Create upload button
         Button uploadButton = (Button) findViewById(R.id.publish_button);
         uploadButton.setTypeface(font);
@@ -53,7 +58,7 @@ public class UploadActivity extends AppCompatActivity {
                     }
                 }
         );
-
+        System.out.println(3);
         // Create cancel button
         Button cancelButton = (Button) findViewById(R.id.cancel_button);
         cancelButton.setTypeface(font);
@@ -72,19 +77,22 @@ public class UploadActivity extends AppCompatActivity {
                     }
                 }
         );
+        System.out.println(4);
     }
 
 
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
+        System.out.println(5);
         mImageView = (ImageView) findViewById(R.id.captured_view);
         String imagePath = getIntent().getExtras().getString("imagePath");
-
+        System.out.println(6);
         if (rotatedBMP == null) {
             setPic(imagePath);
         } else {
             rotatedBMP.recycle();
         }
+        System.out.println(7);
     }
 
 
@@ -122,12 +130,5 @@ public class UploadActivity extends AppCompatActivity {
 
         mImageView.setImageBitmap(rotatedBMP);
     }
-
-
-
-
-
-
-
 
 }

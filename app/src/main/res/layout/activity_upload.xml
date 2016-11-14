@@ -14,20 +14,21 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:id="@+id/captured_view"
-        android:layout_above="@+id/addText" />
+        android:layout_above="@+id/add_text" />
 
     <EditText
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:ems="10"
-        android:id="@+id/addText"
-        android:inputType="textMultiLine"
+        android:id="@+id/add_text"
+        android:inputType="textMultiLine|textNoSuggestions"
         android:layout_marginBottom="55dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_marginLeft="11dp"
-        android:layout_marginStart="11dp" />
+        android:layout_marginStart="11dp"
+        android:maxLength="200" />
 
     <Button
         android:text="Publish"
