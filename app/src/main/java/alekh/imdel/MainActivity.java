@@ -6,10 +6,13 @@ import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
 
 import java.io.File;
+import java.util.ArrayList;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -18,10 +21,15 @@ public class MainActivity extends AppCompatActivity {
 
     private GPSTracker gps;
 
+    private ArrayList<Picture> pictures;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        gps = new GPSTracker(this);
 
         // Delete all files from previous sessions
         deleteRecursively(this.getFilesDir());
@@ -39,9 +47,29 @@ public class MainActivity extends AppCompatActivity {
                 }
         );
 
-        gps = new GPSTracker(this);
+
+
+        // Lookup the recyclerview in activity layout
+        RecyclerView rvContacts = (RecyclerView) findViewById(R.id.picture_view);
+
+        // Initialize contacts
+        pictures = new ArrayList<Picture>();
+        for (int i=0; i<20; i++) {
+            pictures.add(new Picture("path"));
+        }
+
+        // Create adapter passing in the sample user data
+        PictureAdapter adapter = new PictureAdapter(this, pictures);
+        // Attach the adapter to the recyclerview to populate items
+        rvContacts.setAdapter(adapter);
+        // Set layout manager to position the items
+        rvContacts.setLayoutManager(new LinearLayoutManager(this));
+        // That's all!
 
     }
+
+
+
 
     public void toCameraActivity() {
         Intent intent = new Intent(this, CameraActivity.class);
