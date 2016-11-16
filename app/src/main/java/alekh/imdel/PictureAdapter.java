@@ -9,7 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 
-import java.util.ArrayList;
+import java.util.List;
 
 // Create the basic adapter extending from RecyclerView.Adapter
 // Note that we specify the custom ViewHolder which gives us access to our views
@@ -31,14 +31,14 @@ public class PictureAdapter extends RecyclerView.Adapter<PictureAdapter.ViewHold
         }
     }
 
-    // Store a member variable for the contacts
-    private ArrayList<Picture> mPictures;
+    // Store a member variable for the pictures
+    private List<Picture> mPictures;
     // Store the context for easy access
     private Context mContext;
 
     // Pass in the picture array into the constructor
-    public PictureAdapter(Context context, ArrayList<Picture> contacts) {
-        mPictures = contacts;
+    public PictureAdapter(Context context, List<Picture> pictures) {
+        mPictures = pictures;
         mContext = context;
     }
 

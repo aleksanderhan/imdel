@@ -6,7 +6,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
@@ -22,6 +22,7 @@ public class MainActivity extends AppCompatActivity {
     private GPSTracker gps;
 
     private ArrayList<Picture> pictures;
+    private PictureAdapter pictureAdapter;
 
 
     @Override
@@ -29,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Start gps tracker
         gps = new GPSTracker(this);
 
         // Delete all files from previous sessions
@@ -48,33 +50,56 @@ public class MainActivity extends AppCompatActivity {
         );
 
 
-
-        // Lookup the recyclerview in activity layout
-        RecyclerView rvContacts = (RecyclerView) findViewById(R.id.picture_view);
-
-        // Initialize contacts
+        // making dummy data
         pictures = new ArrayList<Picture>();
         for (int i=0; i<20; i++) {
+            System.out.println(pictures.size());
             pictures.add(new Picture("path"));
         }
 
+        RecyclerView rvPictures = (RecyclerView) findViewById(R.id.picture_view);
         // Create adapter passing in the sample user data
-        PictureAdapter adapter = new PictureAdapter(this, pictures);
+        pictureAdapter = new PictureAdapter(this, pictures);
         // Attach the adapter to the recyclerview to populate items
-        rvContacts.setAdapter(adapter);
+        rvPictures.setAdapter(pictureAdapter);
+        final GridLayoutManager layoutManager = new GridLayoutManager(this, 3);
         // Set layout manager to position the items
-        rvContacts.setLayoutManager(new LinearLayoutManager(this));
-        // That's all!
+        rvPictures.setLayoutManager(layoutManager);
+        EndlessRecyclerViewScrollListener scrollListener = new EndlessRecyclerViewScrollListener(layoutManager) {
+            @Override
+            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                // Triggered only when new data needs to be appended to the list
+                // Add whatever code is needed to append new items to the bottom of the list
+                loadNextDataFromApi(totalItemsCount);
+            }
+        };
+
+        // Add scroll listener to recyclerview
+        rvPictures.addOnScrollListener(scrollListener);
 
     }
 
 
+    public void loadNextDataFromApi(int offset) {
+        // Send an API request to retrieve appropriate paginated data
+        //  --> Send the request including an offset value (i.e `page`) as a query parameter.
+        //  --> Deserialize and construct new model objects from the API response
+        //  --> Append the new data objects to the existing set of items inside the array of items
+        //  --> Notify the adapter of the new items made with `notifyItemRangeInserted()`
+        int n = 20;
+        for (int i=0; i<n; i++) {
+            System.out.println(pictures.size());
+            pictures.add(new Picture("path"));
+        }
+        pictureAdapter.notifyItemRangeInserted(offset, n);
+    }
 
 
     public void toCameraActivity() {
         Intent intent = new Intent(this, CameraActivity.class);
         startActivityForResult(intent, TAKE_PICTURE_RESULT_CODE);
     }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -100,6 +125,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+
     private void sendPhoto(String imageText, String imagePath) throws Exception {
         if (gps.isGPSEnabled()) {
             // Rounds coordinates to 6 decimals
@@ -123,8 +149,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
-
     void listFiles(File fileOrDirectory) {
         if (fileOrDirectory.isDirectory())
             for (File child : fileOrDirectory.listFiles())
@@ -133,6 +157,7 @@ public class MainActivity extends AppCompatActivity {
         System.out.println(fileOrDirectory.getAbsolutePath());
     }
 
+
     void deleteRecursively(File fileOrDirectory) {
         if (fileOrDirectory.isDirectory())
             for (File child : fileOrDirectory.listFiles())
@@ -140,7 +165,5 @@ public class MainActivity extends AppCompatActivity {
 
         fileOrDirectory.delete();
     }
-
-
 
 }
