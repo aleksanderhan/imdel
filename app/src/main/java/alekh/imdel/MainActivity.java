@@ -1,25 +1,27 @@
 package alekh.imdel;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
-import android.preference.PreferenceActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Base64;
 import android.view.View;
 import android.widget.Button;
 
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
-import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
+
 
 import cz.msebera.android.httpclient.Header;
 
@@ -59,39 +61,16 @@ public class MainActivity extends AppCompatActivity {
                 }
         );
 
-
-        try {
-            RequestParams params = new RequestParams();
-            params.put("latitude", gps.getLatitude());
-            params.put("longitude", gps.getLongitude());
-            params.put("radius", "1");
-            params.put("amount", "3");
-            params.put("offset", "0");
-            ImdelBackendRestClient.post("get_thumbnails", params, new JsonHttpResponseHandler() {
-                @Override
-                public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                    // If the response is JSONObject instead of expected JSONArray
-                    System.out.println(1);
-                    System.out.println(response);
-                }
-
-                @Override
-                public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
-                    // Pull out the first event on the public timeline
-                    System.out.println(2);
-                    System.out.println(response);
-                }
-            });
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-
-        // making dummy data
         pictures = new ArrayList<Picture>();
-        for (int i=0; i<20; i++) {
-            pictures.add(new Picture("path"));
+        getThumbs(3, 0);
+
+
+        /*
+        // making dummy data
+        for (int i=0; i<12; i++) {
+            pictures.add(new Picture());
         }
+        */
 
 
         RecyclerView rvPictures = (RecyclerView) findViewById(R.id.picture_view);
@@ -165,15 +144,20 @@ public class MainActivity extends AppCompatActivity {
 
     private void sendPhoto(String imageText, String imagePath) throws Exception {
         if (gps.isGPSEnabled()) {
-            // Rounds coordinates to 6 decimals
-            String latitude = Double.toString((double)Math.round(gps.getLatitude() * 1000000d) / 1000000d);
-            String longitude = Double.toString((double)Math.round(gps.getLongitude() * 1000000d) / 1000000d);
+            File image = new File(imagePath);
 
-            Bitmap bitmap = createBitmap(imagePath);
+            RequestParams params = new RequestParams();
+            params.put("latitude", gps.getLatitude());
+            params.put("longitude", gps.getLongitude());
+            params.put("imageText", imageText);
+            params.put("image", image);
 
-            UploadTask task = new UploadTask();
-            task.setData(this, imageText, latitude, longitude);
-            task.execute(bitmap);
+            ImdelBackendRestClient.post("upload_image/", params, new JsonHttpResponseHandler() {
+                @Override
+                public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                    System.out.println(response);
+                }
+            });
         } else {
             System.out.println("gps not enabled");
             // TODO: turn on gps or something
@@ -181,8 +165,52 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private Bitmap createBitmap(String imagePath) {
-        return BitmapFactory.decodeFile(imagePath);
+    private void getThumbs(final int amount, final int offset) {
+        try {
+            RequestParams params = new RequestParams();
+            params.put("latitude", gps.getLatitude());
+            params.put("longitude", gps.getLongitude());
+            params.put("radius", "1");
+            params.put("amount", amount);
+            params.put("offset", offset);
+            ImdelBackendRestClient.post("get_thumbnails", params, new JsonHttpResponseHandler() {
+                @Override
+                public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                    try {
+                        for (int i=1; i<=response.length(); i++) {
+                            JSONObject json = (JSONObject) response.get(Integer.toString(i));
+                            byte[] base64Thumb= Base64.decode((String) json.get("base64Thumb"), 0);
+
+                            String thumbFileName = "thumb_" + json.get("filename");
+                            String thumbPath = getApplicationContext().getFilesDir() + "/" + thumbFileName;
+                            try {
+                                FileOutputStream stream = new FileOutputStream(thumbPath);
+                                stream.write(base64Thumb);
+                                stream.close();
+                            } catch (FileNotFoundException e) {
+                                e.printStackTrace();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                            try {
+                                pictures.add(new Picture(thumbPath));
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        pictureAdapter.notifyItemRangeInserted(offset, amount);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+                @Override
+                public void onFailure(int statusCode, Header[] headers, String responseBody, Throwable throwable) {
+                    System.out.println("failure");
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 

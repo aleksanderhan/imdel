@@ -19,6 +19,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 
 public class CameraActivity extends AppCompatActivity {
@@ -131,9 +133,6 @@ public class CameraActivity extends AppCompatActivity {
 
                 finish();
             } else {
-                // Delete canceled image
-                File f = new File(imagePath);
-                f.delete();
                 finish();
             }
         } else {
@@ -194,15 +193,20 @@ public class CameraActivity extends AppCompatActivity {
 
 
     private File createImageFile() throws IOException {
+        System.out.println("createImageFile");
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp;
+        System.out.println("filename: " + imageFileName);
         // Create an image file name
         File storageDir = this.getFilesDir();
         File image = File.createTempFile(
-                "captured_image",  /* prefix */
+                imageFileName,  /* prefix */
                 ".jpg",         /* suffix */
                 storageDir      /* directory */
         );
 
         imagePath = image.getAbsolutePath();
+        System.out.println("path: " + imagePath);
         return image;
     }
 

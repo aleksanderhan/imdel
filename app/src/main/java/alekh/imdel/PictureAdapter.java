@@ -66,11 +66,8 @@ public class PictureAdapter extends RecyclerView.Adapter<PictureAdapter.ViewHold
     public void onBindViewHolder(PictureAdapter.ViewHolder viewHolder, int position) {
         // Get the data model based on position
         Picture pic = mPictures.get(position);
-
-        //String thumbPath = pic.getPath();
-        //Bitmap thumb = BitmapFactory.decodeFile(thumbPath, bmOptions);
-        Bitmap thumb = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.test_thumb);
-
+        String thumbPath = pic.getThumbPath();
+        Bitmap thumb = BitmapFactory.decodeFile(thumbPath);
         ImageButton imageButton = viewHolder.imageButton;
         imageButton.setImageBitmap(thumb);
     }
@@ -78,6 +75,9 @@ public class PictureAdapter extends RecyclerView.Adapter<PictureAdapter.ViewHold
     // Returns the total count of items in the list
     @Override
     public int getItemCount() {
+        if (mPictures == null) {
+            return 0;
+        }
         return mPictures.size();
     }
 }

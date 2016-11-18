@@ -3,17 +3,24 @@ package alekh.imdel;
 
 public class Picture {
 
-    private String path;
+    private String picturePath;
+    private String thumbPath;
     //private int votes; etc etc
 
     // dummy constructor for development
-    public Picture(String path) {
-        this.path = path;
+    public Picture(String thumbPath) {
+        this.thumbPath = thumbPath;
     }
 
-    //public Picture(String )
+    public String getThumbPath() {
+        return thumbPath;
+    }
 
-    public String getPath() {
-        return path;
+    public String getPicturePath() {
+        return picturePath;
+    }
+
+    public void setPicturePath(String picturePath) {
+        this.picturePath = picturePath;
     }
 }
