@@ -47,7 +47,7 @@ public class UploadTask extends AsyncTask<Bitmap, Void, Void> {
         DefaultHttpClient httpclient = new DefaultHttpClient();
         try {
             String serverAddress = context.getResources().getString(R.string.upload_server);
-            HttpPost httppost = new HttpPost(serverAddress); // server
+            HttpPost httppost = new HttpPost(serverAddress);
 
             // Create an image file name
             String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());

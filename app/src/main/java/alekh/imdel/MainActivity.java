@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
+import android.preference.PreferenceActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -11,8 +12,16 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
 
+import com.loopj.android.http.JsonHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.io.File;
 import java.util.ArrayList;
+
+import cz.msebera.android.httpclient.Header;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -23,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
 
     private ArrayList<Picture> pictures;
     private PictureAdapter pictureAdapter;
+
 
 
     @Override
@@ -50,12 +60,39 @@ public class MainActivity extends AppCompatActivity {
         );
 
 
+        try {
+            RequestParams params = new RequestParams();
+            params.put("latitude", gps.getLatitude());
+            params.put("longitude", gps.getLongitude());
+            params.put("radius", "1");
+            params.put("amount", "3");
+            params.put("offset", "0");
+            ImdelBackendRestClient.post("get_thumbnails", params, new JsonHttpResponseHandler() {
+                @Override
+                public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                    // If the response is JSONObject instead of expected JSONArray
+                    System.out.println(1);
+                    System.out.println(response);
+                }
+
+                @Override
+                public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
+                    // Pull out the first event on the public timeline
+                    System.out.println(2);
+                    System.out.println(response);
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
         // making dummy data
         pictures = new ArrayList<Picture>();
         for (int i=0; i<20; i++) {
-            System.out.println(pictures.size());
             pictures.add(new Picture("path"));
         }
+
 
         RecyclerView rvPictures = (RecyclerView) findViewById(R.id.picture_view);
         // Create adapter passing in the sample user data
@@ -70,7 +107,7 @@ public class MainActivity extends AppCompatActivity {
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
                 // Triggered only when new data needs to be appended to the list
                 // Add whatever code is needed to append new items to the bottom of the list
-                loadNextDataFromApi(totalItemsCount);
+                //loadNextDataFromApi(totalItemsCount);
             }
         };
 
