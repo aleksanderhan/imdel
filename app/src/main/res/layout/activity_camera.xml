@@ -11,7 +11,7 @@
     tools:context="alekh.imdel.CameraActivity">
 
     <Button
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/camera_button"
         android:id="@+id/capture_button"
@@ -22,8 +22,8 @@
         android:textStyle="bold" />
 
     <FrameLayout
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:id="@+id/camera_preview"
         android:layout_above="@+id/capture_button">
 

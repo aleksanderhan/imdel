@@ -25,8 +25,8 @@ public class GPSTracker extends Service implements LocationListener {
 
     private Location location;
     private LocationManager locationManager;
-    private double latitude;
-    private double longitude;
+    private String latitude;
+    private String longitude;
 
     private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 10; // 10 meters
     private static final long MIN_TIME_BW_UPDATES = 30000; // 3 seconds
@@ -83,8 +83,8 @@ public class GPSTracker extends Service implements LocationListener {
                     if (locationManager != null) {
                         location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
                         if (location != null) {
-                            latitude = location.getLatitude();
-                            longitude = location.getLongitude();
+                            latitude = Double.toString((double) Math.round(location.getLatitude() * 1000000d) / 1000000d);
+                            longitude = Double.toString((double) Math.round(location.getLongitude() * 1000000d) / 1000000d);
                         }
                     }
                 }
@@ -110,11 +110,13 @@ public class GPSTracker extends Service implements LocationListener {
     /**
      * Function to get latitude
      * */
-    public double getLatitude(){
+    public String getLatitude(){
         if(location != null){
-            latitude = location.getLatitude();
+            latitude = Double.toString((double)Math.round(location.getLatitude() * 1000000d) / 1000000d);
         }
         // return latitude
+        System.out.print("latitude: ");
+        System.out.println(latitude);
         return latitude;
     }
 
@@ -122,11 +124,13 @@ public class GPSTracker extends Service implements LocationListener {
     /**
      * Function to get longitude
      * */
-    public double getLongitude(){
+    public String getLongitude(){
         if(location != null){
-            longitude = location.getLongitude();
+            longitude = Double.toString((double)Math.round(location.getLongitude() * 1000000d) / 1000000d);
         }
         // return longitude
+        System.out.print("longitude: ");
+        System.out.println(longitude);
         return longitude;
     }
 
