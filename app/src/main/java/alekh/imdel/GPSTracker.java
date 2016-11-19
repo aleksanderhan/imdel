@@ -115,8 +115,6 @@ public class GPSTracker extends Service implements LocationListener {
             latitude = Double.toString((double)Math.round(location.getLatitude() * 1000000d) / 1000000d);
         }
         // return latitude
-        System.out.print("latitude: ");
-        System.out.println(latitude);
         return latitude;
     }
 
@@ -129,8 +127,6 @@ public class GPSTracker extends Service implements LocationListener {
             longitude = Double.toString((double)Math.round(location.getLongitude() * 1000000d) / 1000000d);
         }
         // return longitude
-        System.out.print("longitude: ");
-        System.out.println(longitude);
         return longitude;
     }
 

@@ -14,7 +14,6 @@ import com.loopj.android.http.FileAsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
 import cz.msebera.android.httpclient.Header;
@@ -50,6 +49,7 @@ public class PictureAdapter extends RecyclerView.Adapter<PictureAdapter.ViewHold
         mContext = context;
     }
 
+
     // Usually involves inflating a layout from XML and returning the holder
     @Override
     public PictureAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -72,6 +72,7 @@ public class PictureAdapter extends RecyclerView.Adapter<PictureAdapter.ViewHold
 
         String thumbPath = pic.getThumbPath();
         Bitmap thumb = BitmapFactory.decodeFile(thumbPath);
+
         ImageButton imageButton = viewHolder.imageButton;
         imageButton.setImageBitmap(thumb);
 

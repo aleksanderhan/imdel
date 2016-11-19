@@ -61,6 +61,7 @@ public class CameraActivity extends AppCompatActivity {
                         // get an image from the camera
                         v.setClickable(false);
                         mCamera.takePicture(null, null, photoCallback);
+                        v.setClickable(true);
                     }
                 }
         );

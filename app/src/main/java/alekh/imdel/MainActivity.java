@@ -22,7 +22,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
-
 import cz.msebera.android.httpclient.Header;
 
 
@@ -34,7 +33,6 @@ public class MainActivity extends AppCompatActivity {
 
     private ArrayList<Picture> pictures;
     private PictureAdapter pictureAdapter;
-
 
 
     @Override
@@ -57,14 +55,13 @@ public class MainActivity extends AppCompatActivity {
                     public void onClick(View v) {
                         v.setClickable(false);
                         toCameraActivity();
+                        v.setClickable(true);
                     }
                 }
         );
 
         pictures = new ArrayList<Picture>();
-        getThumbs(3, 0);
-
-
+        getThumbs(9, 0);
 
         RecyclerView rvPictures = (RecyclerView) findViewById(R.id.picture_view);
 
@@ -82,24 +79,13 @@ public class MainActivity extends AppCompatActivity {
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
                 // Triggered only when new data needs to be appended to the list
                 // Add whatever code is needed to append new items to the bottom of the list
-                //loadNextDataFromApi(totalItemsCount);
+                getThumbs(9, totalItemsCount);
             }
         };
 
         // Add scroll listener to recyclerview
         rvPictures.addOnScrollListener(scrollListener);
 
-    }
-
-
-    public void loadNextDataFromApi(int offset) {
-        // Send an API request to retrieve appropriate paginated data
-        //  --> Send the request including an offset value (i.e `page`) as a query parameter.
-        //  --> Deserialize and construct new model objects from the API response
-        //  --> Append the new data objects to the existing set of items inside the array of items
-        //  --> Notify the adapter of the new items made with `notifyItemRangeInserted()`
-
-        //pictureAdapter.notifyItemRangeInserted(offset, n);
     }
 
 
