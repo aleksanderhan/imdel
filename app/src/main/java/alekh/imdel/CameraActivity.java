@@ -59,7 +59,9 @@ public class CameraActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         // get an image from the camera
+                        v.setClickable(false);
                         mCamera.takePicture(null, null, photoCallback);
+                        v.setClickable(true);
                     }
                 }
         );
@@ -130,7 +132,6 @@ public class CameraActivity extends AppCompatActivity {
                 returnIntent.putExtra("imagePath", imagePath);
                 returnIntent.putExtra("imageText", imageText);
                 setResult(Activity.RESULT_OK, returnIntent);
-
                 finish();
             } else {
                 finish();
