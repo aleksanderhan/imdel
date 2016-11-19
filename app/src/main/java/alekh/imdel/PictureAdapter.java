@@ -74,6 +74,10 @@ public class PictureAdapter extends RecyclerView.Adapter<PictureAdapter.ViewHold
         Bitmap thumb = BitmapFactory.decodeFile(thumbPath);
 
         ImageButton imageButton = viewHolder.imageButton;
+
+        //System.out.println(imageButton.getWidth());
+
+
         imageButton.setImageBitmap(thumb);
 
         imageButton.setOnClickListener(new View.OnClickListener() {
