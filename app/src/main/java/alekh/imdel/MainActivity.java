@@ -52,10 +52,10 @@ public class MainActivity extends AppCompatActivity {
         Typeface font = Typeface.createFromAsset(getAssets(), "fontawesome-webfont.ttf" );
         Button captureButton = (Button) findViewById(R.id.to_camera_button);
         captureButton.setTypeface(font);
-        captureButton.setOnClickListener(
-                new View.OnClickListener() {
+        captureButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        v.setClickable(false);
                         toCameraActivity();
                     }
                 }
@@ -65,20 +65,16 @@ public class MainActivity extends AppCompatActivity {
         getThumbs(3, 0);
 
 
-        /*
-        // making dummy data
-        for (int i=0; i<12; i++) {
-            pictures.add(new Picture());
-        }
-        */
-
 
         RecyclerView rvPictures = (RecyclerView) findViewById(R.id.picture_view);
+
         // Create adapter passing in the sample user data
         pictureAdapter = new PictureAdapter(this, pictures);
+
         // Attach the adapter to the recyclerview to populate items
         rvPictures.setAdapter(pictureAdapter);
         final GridLayoutManager layoutManager = new GridLayoutManager(this, 3);
+
         // Set layout manager to position the items
         rvPictures.setLayoutManager(layoutManager);
         EndlessRecyclerViewScrollListener scrollListener = new EndlessRecyclerViewScrollListener(layoutManager) {
@@ -102,12 +98,8 @@ public class MainActivity extends AppCompatActivity {
         //  --> Deserialize and construct new model objects from the API response
         //  --> Append the new data objects to the existing set of items inside the array of items
         //  --> Notify the adapter of the new items made with `notifyItemRangeInserted()`
-        int n = 20;
-        for (int i=0; i<n; i++) {
-            System.out.println(pictures.size());
-            pictures.add(new Picture("path"));
-        }
-        pictureAdapter.notifyItemRangeInserted(offset, n);
+
+        //pictureAdapter.notifyItemRangeInserted(offset, n);
     }
 
 
@@ -143,6 +135,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void sendPhoto(String imageText, String imagePath) throws Exception {
+        // TODO: could be moved back to upload activity together with longitude and latitude ?
         if (gps.isGPSEnabled()) {
             File image = new File(imagePath);
 
@@ -181,7 +174,8 @@ public class MainActivity extends AppCompatActivity {
                             JSONObject json = (JSONObject) response.get(Integer.toString(i));
                             byte[] base64Thumb= Base64.decode((String) json.get("base64Thumb"), 0);
 
-                            String thumbFileName = "thumb_" + json.get("filename");
+                            String filename = (String) json.get("filename");
+                            String thumbFileName = "thumb_" + filename;
                             String thumbPath = getApplicationContext().getFilesDir() + "/" + thumbFileName;
                             try {
                                 FileOutputStream stream = new FileOutputStream(thumbPath);
@@ -193,7 +187,7 @@ public class MainActivity extends AppCompatActivity {
                                 e.printStackTrace();
                             }
                             try {
-                                pictures.add(new Picture(thumbPath));
+                                pictures.add(new Picture((int) json.get("id"), filename, thumbPath));
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
