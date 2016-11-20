@@ -8,7 +8,9 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Base64;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.Spinner;
 
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
@@ -48,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Create capture button with font
         Typeface font = Typeface.createFromAsset(getAssets(), "fontawesome-webfont.ttf" );
-        Button captureButton = (Button) findViewById(R.id.to_camera_button);
+        final Button captureButton = (Button) findViewById(R.id.to_camera_button);
         captureButton.setTypeface(font);
         captureButton.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -60,7 +62,39 @@ public class MainActivity extends AppCompatActivity {
                 }
         );
 
+        // Create settings button
+        Button settingsButton = (Button) findViewById(R.id.settings_button);
+        settingsButton.setTypeface(font);
+        settingsButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                    }
+                }
+        );
+
+        // Create refresh button
+        Button refreshButton = (Button) findViewById(R.id.refresh_button);
+        refreshButton.setTypeface(font);
+        refreshButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                    }
+                }
+        );
+
+        // Create dropdown menu
+        Spinner dropdown = (Spinner)findViewById(R.id.sort_by_menu);
+        String[] items = new String[]{"Distance", "Date", "Vote"};
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, items);
+        dropdown.setAdapter(adapter);
+
+
+        // Create empty picture array
         pictures = new ArrayList<Picture>();
+
+        // Load in the first data from the backend
         getThumbs(9, 0);
 
         RecyclerView rvPictures = (RecyclerView) findViewById(R.id.picture_view);
@@ -160,9 +194,11 @@ public class MainActivity extends AppCompatActivity {
                             JSONObject json = (JSONObject) response.get(Integer.toString(i));
                             byte[] base64Thumb= Base64.decode((String) json.get("base64Thumb"), 0);
 
+                            int id = (int) json.get("id");
                             String filename = (String) json.get("filename");
-                            String thumbFileName = "thumb_" + filename;
-                            String thumbPath = getApplicationContext().getFilesDir() + "/" + thumbFileName;
+                            String thumbPath = getApplicationContext().getFilesDir() + "/" + "thumb_" + filename;
+                            String pub_date = (String) json.get("pub_date");
+                            String text = (String) json.get("text");
                             try {
                                 FileOutputStream stream = new FileOutputStream(thumbPath);
                                 stream.write(base64Thumb);
@@ -172,11 +208,7 @@ public class MainActivity extends AppCompatActivity {
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
-                            try {
-                                pictures.add(new Picture((int) json.get("id"), filename, thumbPath));
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
+                            pictures.add(new Picture(id, filename, thumbPath, pub_date, text));
                         }
                         pictureAdapter.notifyItemRangeInserted(offset, amount);
                     } catch (JSONException e) {

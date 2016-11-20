@@ -57,11 +57,10 @@ public class PictureAdapter extends RecyclerView.Adapter<PictureAdapter.ViewHold
         LayoutInflater inflater = LayoutInflater.from(context);
 
         // Inflate the custom layout
-        View contactView = inflater.inflate(R.layout.picture_item, parent, false);
+        View contactView = inflater.inflate(R.layout.thumb_item, parent, false);
 
         // Return a new holder instance
-        ViewHolder viewHolder = new ViewHolder(contactView);
-        return viewHolder;
+        return new ViewHolder(contactView);
     }
 
     // Involves populating data into the item through holder
@@ -74,10 +73,6 @@ public class PictureAdapter extends RecyclerView.Adapter<PictureAdapter.ViewHold
         Bitmap thumb = BitmapFactory.decodeFile(thumbPath);
 
         ImageButton imageButton = viewHolder.imageButton;
-
-        //System.out.println(imageButton.getWidth());
-
-
         imageButton.setImageBitmap(thumb);
 
         imageButton.setOnClickListener(new View.OnClickListener() {
@@ -111,7 +106,7 @@ public class PictureAdapter extends RecyclerView.Adapter<PictureAdapter.ViewHold
     }
 
 
-    public void downloadPicture(final Picture pic) {
+    private void downloadPicture(final Picture pic) {
         String path = String.valueOf(mContext.getFilesDir()) +"/" + pic.getFilename();
         File tempFile = new File(path);
 

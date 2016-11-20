@@ -1,38 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="alekh.imdel.MainActivity">
 
-
-    <Button
-        android:id="@+id/to_camera_button"
-        android:text="Take picture"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:background="@drawable/button"
-        android:textColor="#ffd3ffe5"
-        android:textStyle="bold"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/picture_view"
         android:scrollbars="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/to_camera_button"
+        android:layout_below="@+id/settings_button"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
+
+    <Button
+        android:id="@+id/settings_button"
+        android:text="@string/settings_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/button"
+        android:textColor="#ffd3ffe5"
+        android:textStyle="bold"
+        android:textSize="30sp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <Button
+        android:id="@+id/to_camera_button"
+        android:text="@string/camera_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/button"
+        android:textColor="#ffd3ffe5"
+        android:textStyle="bold"
+        android:textSize="30sp"
+        android:layout_alignParentTop="true"
+        android:layout_toStartOf="@+id/settings_button"
+        android:layout_toLeftOf="@+id/settings_button" />
+
+    <Spinner
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:id="@+id/sort_by_menu"
+        android:layout_above="@+id/picture_view"
+        android:spinnerMode="dropdown"
+        android:background="@color/colorPrimary"
+        android:layout_toRightOf="@+id/refresh_button"
+        android:layout_toEndOf="@id/refresh_button"
+        android:layout_toLeftOf="@+id/to_camera_button"
+        android:layout_toStartOf="@+id/to_camera_button" />
+
+    <Button
+        android:text="@string/refresh_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/button"
+        android:textColor="#ffd3ffe5"
+        android:textStyle="bold"
+        android:textSize="30sp"
+        android:layout_above="@+id/picture_view"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:id="@+id/refresh_button" />
 
 
 </RelativeLayout>

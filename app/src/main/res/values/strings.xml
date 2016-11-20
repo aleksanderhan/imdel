@@ -1,9 +1,14 @@
 <resources>
     <string name="app_name">imdel</string>
     <string name="camera_button">&#xf030;</string>
-    <string name="camera_switch_button">&#xf0e2;</string>
+    <string name="camera_switch_button">&#xf01e;</string>
     <string name="cancel_button">&#xf00d;</string>
     <string name="publish_button">&#xf00c;</string>
+    <string name="settings_button">&#xf0c9;</string>
+    <string name="upvote_button">&#xf164;</string>
+    <string name="downvote_button">&#xf165;</string>
+    <string name="refresh_button">&#xf021;</string>
+
 
     <string name="upload_server">http://imdel.tk:8000/upload_image</string>
 

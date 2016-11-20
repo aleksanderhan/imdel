@@ -7,13 +7,17 @@ public class Picture {
     private String filename;
     private String picturePath;
     private String thumbPath;
+    String pub_date;
+    String text;
     private boolean downloaded = false;
 
     // dummy constructor for development
-    public Picture(int id, String filename, String thumbPath) {
+    public Picture(int id, String filename, String thumbPath, String pub_date, String text) {
         this.id = id;
         this.filename = filename;
         this.thumbPath = thumbPath;
+        this.pub_date = pub_date;
+        this.text = text;
     }
 
     public String getThumbPath() {
@@ -38,7 +42,6 @@ public class Picture {
 
     public boolean isDownloaded() {
         return downloaded;
-
     }
 
     public void setDownloaded(boolean downloaded) {

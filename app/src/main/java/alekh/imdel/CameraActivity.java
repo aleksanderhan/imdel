@@ -173,7 +173,7 @@ public class CameraActivity extends AppCompatActivity {
             Camera.Parameters cParams = c.getParameters();
 
             // Set photo size
-            int max_resolution = 1980*1080;
+            int max_resolution = 1280*960 + 1; // arbitrary atm
             Camera.Size photoSize = getBiggestSupportedPictureSizeSmallerThan(cParams, max_resolution);
             cParams.setPictureSize(photoSize.width, photoSize.height);
 
@@ -295,6 +295,11 @@ public class CameraActivity extends AppCompatActivity {
                 }
             }
         }
+        System.out.print("width: ");
+        System.out.println(result.width);
+        System.out.print("height: ");
+        System.out.println(result.height);
+        System.out.println("");
         return result;
     }
 
