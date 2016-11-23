@@ -29,9 +29,11 @@ import cz.msebera.android.httpclient.Header;
 
 public class MainActivity extends AppCompatActivity {
 
-    public static final int TAKE_PICTURE_RESULT_CODE = 1;
+    public static final int TAKE_PICTURE_REQUEST_CODE = 1;
+    public static final int LOGIN_REQUEST_CODE = 2;
 
     private GPSTracker gps;
+    private String token;
 
     private ArrayList<Picture> pictures;
     private PictureAdapter pictureAdapter;
@@ -44,6 +46,9 @@ public class MainActivity extends AppCompatActivity {
 
         // Start gps tracker
         gps = new GPSTracker(this);
+
+        // Login/Register
+        toLogin();
 
         // Delete all files from previous sessions
         deleteRecursively(this.getFilesDir());
@@ -94,13 +99,10 @@ public class MainActivity extends AppCompatActivity {
         // Create empty picture array
         pictures = new ArrayList<Picture>();
 
-        // Load in the first data from the backend
-        getThumbs(9, 0);
-
         RecyclerView rvPictures = (RecyclerView) findViewById(R.id.picture_view);
 
         // Create adapter passing in the sample user data
-        pictureAdapter = new PictureAdapter(this, pictures);
+        pictureAdapter = new PictureAdapter(this, pictures, token);
 
         // Attach the adapter to the recyclerview to populate items
         rvPictures.setAdapter(pictureAdapter);
@@ -113,7 +115,7 @@ public class MainActivity extends AppCompatActivity {
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
                 // Triggered only when new data needs to be appended to the list
                 // Add whatever code is needed to append new items to the bottom of the list
-                getThumbs(9, totalItemsCount);
+                getThumbs(21, totalItemsCount);
             }
         };
 
@@ -123,16 +125,22 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    public void toLogin() {
+        Intent loginIntent = new Intent(this, Login.class);
+        startActivityForResult(loginIntent, LOGIN_REQUEST_CODE);
+    }
+
+
     public void toCameraActivity() {
-        Intent intent = new Intent(this, CameraActivity.class);
-        startActivityForResult(intent, TAKE_PICTURE_RESULT_CODE);
+        Intent cameraIntent = new Intent(this, CameraActivity.class);
+        startActivityForResult(cameraIntent, TAKE_PICTURE_REQUEST_CODE);
     }
 
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         // Check which request we're responding to
-        if (requestCode == TAKE_PICTURE_RESULT_CODE) {
+        if (requestCode == TAKE_PICTURE_REQUEST_CODE) {
             // Make sure the request was successful
             if (resultCode == RESULT_OK) {
                 String imageText = data.getStringExtra("imageText");
@@ -143,13 +151,18 @@ public class MainActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
             } else if (resultCode == CameraActivity.BACK_PRESSED) {
-                System.out.println("back pressed!");
+                System.out.println("back pressed");
             } else {
                 // Go back to CameraActivity instead of to MainActivity
                 toCameraActivity();
             }
+        } else if (requestCode == LOGIN_REQUEST_CODE){
+            token = data.getStringExtra("token");
+
+            // Load in the first data from the backend
+            getThumbs(21, 0);
         } else {
-            System.out.println("wtf?!");
+
         }
     }
 
@@ -165,7 +178,7 @@ public class MainActivity extends AppCompatActivity {
             params.put("imageText", imageText);
             params.put("image", image);
 
-            ImdelBackendRestClient.post("upload_image/", params, new JsonHttpResponseHandler() {
+            ImdelBackendRestClient.post(getString(R.string.publish_url), params, token, new JsonHttpResponseHandler() {
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                     System.out.println(response);
@@ -186,7 +199,7 @@ public class MainActivity extends AppCompatActivity {
             params.put("radius", "1");
             params.put("amount", amount);
             params.put("offset", offset);
-            ImdelBackendRestClient.post("get_thumbnails", params, new JsonHttpResponseHandler() {
+            ImdelBackendRestClient.post(getString(R.string.fetch_thumbnail_url), params, token, new JsonHttpResponseHandler() {
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                     try {

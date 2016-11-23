@@ -9,7 +9,10 @@
     <string name="downvote_button">&#xf165;</string>
     <string name="refresh_button">&#xf021;</string>
 
-
-    <string name="upload_server">http://imdel.tk:8000/upload_image</string>
+    <string name="publish_url">http://imdel.tk:8000/publish_photo/</string>
+    <string name="fetch_thumbnail_url">http://imdel.tk:8000/fetch_thumbnails/</string>
+    <string name="get_photo_url">http://imdel.tk:8000/get_photo/</string>
+    <string name="register_url">http://imdel.tk:8000/register/</string>
+    <string name="login_url">http://imdel.tk:8000/login/</string>
 
 </resources>

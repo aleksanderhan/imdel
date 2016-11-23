@@ -43,10 +43,13 @@ public class PictureAdapter extends RecyclerView.Adapter<PictureAdapter.ViewHold
     // Store the context for easy access
     private Context mContext;
 
+    private String token;
+
     // Pass in the picture array into the constructor
-    public PictureAdapter(Context context, List<Picture> pictures) {
-        mPictures = pictures;
-        mContext = context;
+    public PictureAdapter(Context context, List<Picture> pictures, String token) {
+        this.mPictures = pictures;
+        this.mContext = context;
+        this.token = token;
     }
 
 
@@ -113,7 +116,7 @@ public class PictureAdapter extends RecyclerView.Adapter<PictureAdapter.ViewHold
         RequestParams params = new RequestParams();
         params.put("id", pic.getId());
 
-        ImdelBackendRestClient.post("get_picture/", params, new FileAsyncHttpResponseHandler(tempFile) {
+        ImdelBackendRestClient.post(mContext.getString(R.string.get_photo_url), params, token, new FileAsyncHttpResponseHandler(tempFile) {
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, File file) {
 
