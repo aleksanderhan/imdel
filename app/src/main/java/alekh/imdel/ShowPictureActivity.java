@@ -2,19 +2,48 @@ package alekh.imdel;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Typeface;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 
 public class ShowPictureActivity extends AppCompatActivity {
 
-    ImageView mImageView;
+    private ImageView mImageView;
+    private TextView mTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_picture);
+
+        Typeface font = Typeface.createFromAsset(getAssets(), "fontawesome-webfont.ttf" );
+        Button upvoteButton = (Button) findViewById(R.id.upvote_button);
+        upvoteButton.setTypeface(font);
+        upvoteButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                    }
+                }
+        );
+
+        Button downvoteButton = (Button) findViewById(R.id.downvote_button);
+        downvoteButton.setTypeface(font);
+        downvoteButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                    }
+                }
+        );
+
+        //mTextView = (TextView) findViewById(R.id.display_text);
+        //mTextView.setText("asd");
 
     }
 

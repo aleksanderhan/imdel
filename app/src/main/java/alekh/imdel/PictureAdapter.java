@@ -43,10 +43,13 @@ public class PictureAdapter extends RecyclerView.Adapter<PictureAdapter.ViewHold
     // Store the context for easy access
     private Context mContext;
 
+    private String token;
+
     // Pass in the picture array into the constructor
-    public PictureAdapter(Context context, List<Picture> pictures) {
-        mPictures = pictures;
-        mContext = context;
+    public PictureAdapter(Context context, List<Picture> pictures, String token) {
+        this.mPictures = pictures;
+        this.mContext = context;
+        this.token = token;
     }
 
 
@@ -57,11 +60,10 @@ public class PictureAdapter extends RecyclerView.Adapter<PictureAdapter.ViewHold
         LayoutInflater inflater = LayoutInflater.from(context);
 
         // Inflate the custom layout
-        View contactView = inflater.inflate(R.layout.picture_item, parent, false);
+        View contactView = inflater.inflate(R.layout.thumb_item, parent, false);
 
         // Return a new holder instance
-        ViewHolder viewHolder = new ViewHolder(contactView);
-        return viewHolder;
+        return new ViewHolder(contactView);
     }
 
     // Involves populating data into the item through holder
@@ -74,10 +76,6 @@ public class PictureAdapter extends RecyclerView.Adapter<PictureAdapter.ViewHold
         Bitmap thumb = BitmapFactory.decodeFile(thumbPath);
 
         ImageButton imageButton = viewHolder.imageButton;
-
-        //System.out.println(imageButton.getWidth());
-
-
         imageButton.setImageBitmap(thumb);
 
         imageButton.setOnClickListener(new View.OnClickListener() {
@@ -111,14 +109,13 @@ public class PictureAdapter extends RecyclerView.Adapter<PictureAdapter.ViewHold
     }
 
 
-    public void downloadPicture(final Picture pic) {
+    private void downloadPicture(final Picture pic) {
         String path = String.valueOf(mContext.getFilesDir()) +"/" + pic.getFilename();
         File tempFile = new File(path);
 
-        RequestParams params = new RequestParams();
-        params.put("id", pic.getId());
+        int id = pic.getId();
 
-        ImdelBackendRestClient.post("get_picture/", params, new FileAsyncHttpResponseHandler(tempFile) {
+        ImdelBackendRestClient.get(mContext.getString(R.string.get_photo_url), id, token, new FileAsyncHttpResponseHandler(tempFile) {
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, File file) {
 
