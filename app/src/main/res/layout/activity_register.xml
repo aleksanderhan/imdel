@@ -11,16 +11,7 @@
     tools:context="alekh.imdel.Login">
 
     <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:inputType="textPersonName"
-        android:ems="10"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="166dp"
-        android:id="@+id/register_username_field" />
-
-    <EditText
+        android:hint="Password"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:inputType="textPassword"
@@ -31,6 +22,7 @@
         android:id="@+id/register_password_field1" />
 
     <EditText
+        android:hint="Re-type password"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:inputType="textPassword"
@@ -41,7 +33,7 @@
         android:id="@+id/register_password_field2" />
 
     <Button
-        android:text="Button"
+        android:text="Register"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/register_password_field2"
@@ -54,5 +46,16 @@
         android:textColor="#ffd3ffe5"
         android:textStyle="bold"
         android:textSize="20sp" />
+
+    <EditText
+        android:hint="Username"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textPersonName"
+        android:ems="10"
+        android:layout_marginTop="85dp"
+        android:id="@+id/register_username_field"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>

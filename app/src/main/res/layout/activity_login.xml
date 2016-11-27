@@ -11,16 +11,18 @@
     tools:context="alekh.imdel.Login">
 
     <EditText
+        android:hint="Username"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:inputType="textPersonName"
         android:ems="10"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="166dp"
+        android:layout_marginTop="85dp"
         android:id="@+id/login_username_field" />
 
     <EditText
+        android:hint="Password"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:inputType="textPassword"
@@ -29,6 +31,22 @@
         android:layout_below="@+id/login_username_field"
         android:layout_alignLeft="@+id/login_username_field"
         android:layout_alignStart="@+id/login_username_field" />
+
+    <Button
+        android:text="Register"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/to_register_button"
+        android:background="@drawable/button"
+        android:textColor="#ffd3ffe5"
+        android:textStyle="bold"
+        android:textSize="20sp"
+        android:layout_below="@+id/login_button"
+        android:layout_alignLeft="@+id/login_button"
+        android:layout_alignStart="@+id/login_button"
+        android:layout_marginTop="12dp"
+        android:layout_alignRight="@+id/login_button"
+        android:layout_alignEnd="@+id/login_button" />
 
     <Button
         android:text="Login"
@@ -44,20 +62,5 @@
         android:layout_alignStart="@+id/login_password_field"
         android:layout_alignRight="@+id/login_password_field"
         android:layout_alignEnd="@+id/login_password_field" />
-
-    <Button
-        android:text="Register"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/to_register_button"
-        android:background="@drawable/button"
-        android:textColor="#ffd3ffe5"
-        android:textStyle="bold"
-        android:textSize="20sp"
-        android:layout_below="@+id/login_button"
-        android:layout_alignLeft="@+id/login_button"
-        android:layout_alignStart="@+id/login_button"
-        android:layout_alignRight="@+id/login_button"
-        android:layout_alignEnd="@+id/login_button" />
 
 </RelativeLayout>

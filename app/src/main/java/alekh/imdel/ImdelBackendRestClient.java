@@ -6,11 +6,11 @@ public class ImdelBackendRestClient {
 
     private static AsyncHttpClient client = new AsyncHttpClient();
 
-    public static void get(String url, RequestParams params, String token, AsyncHttpResponseHandler responseHandler) {
+    public static void get(String url, int id,  String token, AsyncHttpResponseHandler responseHandler) {
         if (token != null) {
             client.addHeader("Authorization", "Token " + token);
         }
-        client.get(url, params, responseHandler);
+        client.get(url + Integer.toString(id) + "/", responseHandler);
     }
 
     public static void post(String url, RequestParams params, String token, AsyncHttpResponseHandler responseHandler) {

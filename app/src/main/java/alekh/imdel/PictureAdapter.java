@@ -113,10 +113,9 @@ public class PictureAdapter extends RecyclerView.Adapter<PictureAdapter.ViewHold
         String path = String.valueOf(mContext.getFilesDir()) +"/" + pic.getFilename();
         File tempFile = new File(path);
 
-        RequestParams params = new RequestParams();
-        params.put("id", pic.getId());
+        int id = pic.getId();
 
-        ImdelBackendRestClient.post(mContext.getString(R.string.get_photo_url), params, token, new FileAsyncHttpResponseHandler(tempFile) {
+        ImdelBackendRestClient.get(mContext.getString(R.string.get_photo_url), id, token, new FileAsyncHttpResponseHandler(tempFile) {
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, File file) {
 

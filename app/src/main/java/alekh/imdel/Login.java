@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
@@ -63,14 +64,17 @@ public class Login extends AppCompatActivity {
         RequestParams params = new RequestParams();
         params.put("username", username);
         params.put("password", password);
-        ImdelBackendRestClient.post(getString(R.string.publish_url), params, null, new JsonHttpResponseHandler() {
+        ImdelBackendRestClient.post(getString(R.string.login_url), params, null, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 try {
                     String token = (String) response.get("token");
+                    int userID = (int) response.get("user_id");
                     Intent returnIntent = new Intent();
                     returnIntent.putExtra("token", token);
+                    returnIntent.putExtra("user_id", userID);
                     setResult(Activity.RESULT_OK, returnIntent);
+                    Toast.makeText(getApplicationContext(), "Login successful.", Toast.LENGTH_LONG).show();
                     finish();
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -94,4 +98,5 @@ public class Login extends AppCompatActivity {
             }
         }
     }
+
 }
